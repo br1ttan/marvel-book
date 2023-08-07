@@ -1,65 +1,57 @@
-import axios from "axios";
-import { IResponse } from "../interfaces/character-data.interface";
+import { ICharacter, IResponse } from "../interfaces/character-data.interface";
 import { ITransformedCharacterInfo } from "../interfaces/transformed-character-info.interface";
 import { ENVIRONMENTS } from "../environments/environment";
+import UseHttp from "../hooks/http.hook";
 
-export class MarvelService {
-    private readonly apiBase = 'https://gateway.marvel.com:443/v1/public';
-    private readonly apiKey = ENVIRONMENTS.apiKey;
+const useMarvelService = () => {
+    const { request, loading, error, clearError } = UseHttp();
+
+    const apiBase = 'https://gateway.marvel.com:443/v1/public';
+    const apiKey = ENVIRONMENTS.apiKey;
     
-    public getCharacterById = (id: number) => {
-        return (
-            this.getResource(
-                `${this.apiBase}/characters/${id}?apikey=${this.apiKey}`
-            ) as Promise<IResponse>
-        );
+    const getCharacterById = async (id: number) => {
+        const response = await request(`${apiBase}/characters/${id}?apikey=${apiKey}`)
+            .then((data: IResponse) => data.data.results);
+        
+        return transformCharacter(response);
     }
 
-    public getAllCharacters = () => {
-        return (
-            this.getResource(
-                `${this.apiBase}/characters?apikey=${this.apiKey}`
-            ) as Promise<IResponse>
-        );
+    const getAllCharacters =  async () => {
+        const response = await request(`${apiBase}/characters?apikey=${apiKey}`) as IResponse;
+
+        return response.data.results;
     }
   
-    public getCharactersByOffsetAndLimit = (offset: number, limit: number) => {
-        return (
-            this.getResource(
-                `${this.apiBase}/characters?limit=${limit}&offset=${offset}&apikey=${this.apiKey}`
-            ) as Promise<IResponse>
+    const getCharactersByOffsetAndLimit = async (offset: number, limit: number) => {
+        const response = (
+            await request(
+                `${apiBase}/characters?limit=${limit}&offset=${offset}&apikey=${apiKey}`
+            ) as IResponse
         );
+   
+        return response.data.results;
     }
 
-    public transformCharacter = (data: IResponse) => {
+    const transformCharacter = (data: ICharacter[]) => {
         return ({
-            name: data.data.results[0].name,
-            description: data.data.results[0].description,
-            homepage: data.data.results[0].resourceURI,
+            name: data[0].name,
+            description: data[0].description,
+            homepage: data[0].resourceURI,
             thumbnail: `
-            ${data.data.results[0].thumbnail.path}.${data.data.results[0].thumbnail.extension}
+            ${data[0].thumbnail.path}.${data[0].thumbnail.extension}
             `,
-            wiki: data.data.results[0].urls[0].url
+            wiki: data[0].urls[0].url
         } as ITransformedCharacterInfo);
     }
 
-    private getResource = async (url: string) => {
-        const res = await fetch(url);
-    
-        if (!res.ok) {
-            throw new Error(`Could not fetch ${res.status}`);
-        }
-
-        return await res.json();
-    }
-
-    public getResource2 = async () => {
-        const res = axios.get(`${this.apiBase}/characters?apikey=${this.apiKey}`);
-    
-        if (!(await res).status) {
-            throw new Error(`Could not fetch ${(await res).statusText}`);
-        }
-
-        return (await res).data;
-    }
+    return { 
+        loading, 
+        error, 
+        clearError, 
+        getCharacterById, 
+        getAllCharacters, 
+        getCharactersByOffsetAndLimit 
+    };
 }
+
+export default useMarvelService;

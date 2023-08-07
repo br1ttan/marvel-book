@@ -8,11 +8,11 @@ import { useState } from "react";
 import { ICharacter } from "../../interfaces/character-data.interface";
 
 const App = () => {
-    const [data, setData] = useState<ICharacter | null>(null);
+    const [selectedCharacter, setSelectedCharacter] = useState<ICharacter | null>(null);
 
-    const handleClick = (data: ICharacter) => {
+    const handleCharacterSelect = (data: ICharacter) => {
         if (data) {
-            setData(data);
+            setSelectedCharacter(data);
         }
     }
 
@@ -22,8 +22,8 @@ const App = () => {
             <main>
                 <RandomChar/>
                 <div className="char__content">
-                    <CharList handleClick={handleClick}/>
-                    <CharInfo data={data}/>
+                    <CharList handleClick={handleCharacterSelect}/>
+                    <CharInfo character={selectedCharacter}/>
                 </div>
                 <img className="bg-decoration" src={decoration} alt="vision"/>
             </main>

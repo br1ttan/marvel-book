@@ -4,9 +4,9 @@ import { ICharacter } from '../../interfaces/character-data.interface';
 import { FC } from 'react';
 import ImageCard from '../../ui/components/imageCard/imageCard';
 
-export const CharInfo: FC<{ data: ICharacter | null }> = ({ data }) => {
+export const CharInfo: FC<{ character: ICharacter | null }> = ({ character }) => {
     
-    const staticData = {
+    const staticCharacterData = {
         id: 0,
         name: 'Static Thor',
         description: 'This is static data for Thor. No description available.',
@@ -19,10 +19,10 @@ export const CharInfo: FC<{ data: ICharacter | null }> = ({ data }) => {
         img: ''
     };
     
-    const characterData = {...data, img: thor} || staticData;
+    const characterData = {...character, img: thor} || staticCharacterData;
 
-    if (data) {
-        characterData.img = `${data.thumbnail.path}.${data.thumbnail.extension}`;
+    if (character) {
+        characterData.img = `${character.thumbnail.path}.${character.thumbnail.extension}`;
     }
 
     return (

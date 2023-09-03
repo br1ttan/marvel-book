@@ -7,11 +7,11 @@ import ErrorMessage from '../../ui/components/errorMessage/errorMessage';
 import Spinner from '../../ui/components/spinner/spinner';
 import mjolnir from '../../resources/img/mjolnir.png';
 import ImageCard from '../../ui/components/imageCard/imageCard';
-import useMarvelService from '../../services/marvel-service';
+import useMarvelCharactersService from '../../services/marvel-characters.service';
 
 const RandomChar = () => {
     const [data, setData] = useState<ITransformedCharacterInfo | null>(null);
-    const { loading, error, getCharacterById } = useMarvelService();
+    const { loading, error, getCharacterById } = useMarvelCharactersService();
 
     useEffect(() => {
         updateData();

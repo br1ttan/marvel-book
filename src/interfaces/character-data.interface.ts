@@ -1,4 +1,6 @@
-export interface IResponse {
+import { Thumbnail } from "./common-interfaces.interface";
+
+export interface ICharacterRoot {
   readonly code: number;
   readonly status: string;
   readonly copyright: string;
@@ -30,11 +32,6 @@ export interface ICharacter {
   readonly urls: Url[];
 }
 
-export interface Thumbnail {
-  readonly path: string;
-  readonly extension: string;
-}
-
 export interface Comics {
   readonly available: number;
   readonly collectionURI: string;
@@ -42,49 +39,57 @@ export interface Comics {
   readonly returned: number;
 }
 
-export interface Item {
+export interface ITransformedCharacterInfo {
+  readonly name: string;
+  readonly description: string;
+  readonly homepage: string;
+  readonly thumbnail: string;
+  readonly wiki: string;
+}
+
+interface Item {
   readonly resourceURI: string;
   readonly name: string;
 }
 
-export interface Series {
+interface Series {
   readonly available: number;
   readonly collectionURI: string;
   readonly items: Item2[];
   readonly returned: number;
 }
 
-export interface Item2 {
+interface Item2 {
   readonly resourceURI: string;
   readonly name: string;
 }
 
-export interface Stories {
+interface Stories {
   readonly available: number;
   readonly collectionURI: string;
   readonly items: Item3[];
   readonly returned: number;
 }
 
-export interface Item3 {
+interface Item3 {
   readonly resourceURI: string;
   readonly name: string;
   readonly type: string;
 }
 
-export interface Events {
+interface Events {
   readonly available: number;
   readonly collectionURI: string;
   readonly items: Item4[];
   readonly returned: number;
 }
 
-export interface Item4 {
+interface Item4 {
   readonly resourceURI: string;
   readonly name: string;
 }
 
-export interface Url {
+interface Url {
   readonly type: string;
   readonly url: string;
 }

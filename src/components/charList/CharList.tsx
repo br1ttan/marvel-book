@@ -1,15 +1,18 @@
-import './charList.scss';
-import { FC, useCallback, useEffect, useState } from 'react';
-import ErrorMessage from '../../ui/components/errorMessage/errorMessage';
-import { ICharacter } from '../../interfaces/character-data.interface';
-import useMarvelService from '../../services/marvel-service';
+import "./charList.scss";
+import { FC, useCallback, useEffect, useState } from "react";
+import ErrorMessage from "../../ui/components/errorMessage/errorMessage";
+import { ICharacter } from "../../interfaces/character-data.interface";
+import useMarvelCharactersService from "../../services/marvel-characters.service";
 
-const CharList: FC<{ handleClick: (data: ICharacter) => void }> = ({ handleClick }) => {
+const CharList: FC<{ handleClick: (data: ICharacter) => void }> = ({
+  handleClick
+}) => {
   const [characterList, setCharacterList] = useState<ICharacter[]>([]);
   const [baseLimit, setBaseLimit] = useState<number>(9);
   const [selectedCharacterId, setSelectedCharacterId] = useState<number | null>(null);
 
-  const { loading, error, getCharactersByOffsetAndLimit } = useMarvelService();
+  const { loading, error, getCharactersByOffsetAndLimit } =
+    useMarvelCharactersService();
 
   const onCharacterClick = (character: ICharacter) => {
     setSelectedCharacterId(character.id);
@@ -21,9 +24,9 @@ const CharList: FC<{ handleClick: (data: ICharacter) => void }> = ({ handleClick
   };
 
   const updateData = useCallback(() => {
-      getCharactersByOffsetAndLimit(0, baseLimit)
-        .then((data) => setCharacterList(data))
-        .catch(() => setCharacterList([]))
+    getCharactersByOffsetAndLimit(0, baseLimit)
+      .then((data) => setCharacterList(data))
+      .catch(() => setCharacterList([]));
   }, [baseLimit]);
 
   useEffect(() => {
@@ -33,42 +36,40 @@ const CharList: FC<{ handleClick: (data: ICharacter) => void }> = ({ handleClick
   return (
     <div className="char__list">
       <ul className="char__grid">
-        
-        {
-          error ? <ErrorMessage message="помилка" /> :
+        {error ? (
+          <ErrorMessage message="Помилка" />
+        ) : (
           characterList?.map((character: ICharacter) => (
             <View
               key={character.id}
               data={character}
               isSelected={selectedCharacterId === character.id}
-              handleClick={onCharacterClick}/>
-        ))}
+              handleClick={onCharacterClick}
+            />
+          ))
+        )}
       </ul>
-        {
-          !loading ? 
-          <button className="button button__main button__long" onClick={onButtonClick}>
-            <div className="inner">load more</div>
-          </button>
-          :
-          <button className="button button__main button__long">
-            <div className="inner">...</div>
-          </button>
-        }
+      <button
+        className="button button__main button__long"
+        disabled={loading}
+        onClick={onButtonClick}>
+        <div className="inner">{ loading ? '...' : 'load more' }</div>
+      </button>
     </div>
   );
 };
 
-const View: FC<{ data: ICharacter; isSelected: boolean; handleClick: (data: ICharacter) => void }> = ({
-  data,
-  isSelected,
-  handleClick,
-}) => {
+const View: FC<{
+  data: ICharacter,
+  isSelected: boolean,
+  handleClick: (data: ICharacter) => void
+}> = ({ data, isSelected, handleClick }) => {
   const imgPath = `${data.thumbnail.path}.${data.thumbnail.extension}`;
-  
+
   return (
     <>
-      <li 
-        className={`char__item ${isSelected ? 'char__item_selected' : ''}`} 
+      <li
+        className={`char__item ${ isSelected ? 'char__item_selected' : '' }`}
         onClick={() => handleClick(data)}>
         <img src={imgPath} alt="abyss" />
         <div className="char__name">{data.name}</div>
